@@ -16,74 +16,126 @@ button.fullWidth {
 	display: block;
 	width: 100%;
 }
+
+div.left {
+	float: left;
+}
 	</style>
 </head>
 <body>
-	<h1>Telescience calculator</h1>
-	<table>
-		<tbody>
-			<tr>
-				<td><em>x<sub>pad</sub></em> =</td><td><input id="telepadX" placeholder="Pad X" type="number" min="0" max="255" /></td>
-				<td><em>y<sub>pad</sub></em> =</td><td><input id="telepadY" placeholder="Pad Y" type="number" min="0" max="255" /></td>
-			</tr>
-			<tr>
-				<td><em>x</em><sub>1</sub> = </td><td><input id="calibX1" placeholder="1st X" type="number" min="0" max="255" autocomplete="off" /></td>
-				<td><em>y</em><sub>1</sub> = </td><td><input id="calibY1" placeholder="1st Y" type="number" min="0" max="255" autocomplete="off" /></td>
-			</tr>
-			<tr>
-				<td><em>x</em><sub>2</sub> = </td><td><input id="calibX2" placeholder="2nd X" type="number" min="0" max="255" autocomplete="off" /></td>
-				<td><em>y</em><sub>2</sub> = </td><td><input id="calibY2" placeholder="2nd Y" type="number" min="0" max="255" autocomplete="off" /></td>
-			</tr>
-			<tr>
-				<td>φ =</td><td><input id="calibBearing" placeholder="bearing" type="number" autocomplete="off" /></td>
-				<td>θ =</td><td><input id="calibElevation" placeholder="elevation" type="number" autocomplete="off" /></td>
-			</tr>
-			<tr>
-				<td>P<sub>1</sub> =</td><td><select id="calibPower1">
-					<option>5</option>
-					<option>10</option>
-					<option>20</option>
-					<option>25</option>
-					<option>30</option>
-					<option>40</option>
-					<option>50</option>
-					<option>80</option>
-					<option>100</option>
-				</select></td>
-				<td>P<sub>2</sub> =</td><td><select id="calibPower2">
-					<option>5</option>
-					<option>10</option>
-					<option>20</option>
-					<option>25</option>
-					<option>30</option>
-					<option>40</option>
-					<option>50</option>
-					<option>80</option>
-					<option>100</option>
-				</select></td>
-			</tr>
-			<tr>
-				<td colspan="4"><button type="button" class="fullWidth" id="btn_calculateErrors">Calculate Errors &darr;</button></td>
-			</tr>
-		</tbody>
-	</table>
-	<p>Δφ = <span class="value" id="bearingErrorValue">undefined</span>; Δθ = <span class="value" id="elevationErrorValue">undefined</span>; ΔP = <span class="value" id="powerErrorValue">undefined</span>.</p>
-	<table>
-		<tbody>
-			<tr>
-				<td><em>x<sub>targ</sub></em> =</td><td><input id="targetXValue" placeholder="desired X" type="number" min="1" max="255" /></td>
-				<td><em>y<sub>targ</sub></em> =</td><td><input id="targetYValue" placeholder="desired Y" type="number" min="1" max="255" /></td>
-			</tr>
-			<tr>
-				<td colspan="4"><button type="button" class="fullWidth" id="btn_triangulate">Triangulate coordinates</button></td>
-			</tr>	
-		</tbody>
-	</table>
-	<p>φ<sub>targ</sub> = <span class="value" id="bearingValue">undefined</span>; θ<sub>targ</sub> = <span class="value" id="elevationValue">undefined</span>; P<sub>targ</sub> = <span class="value" id="powerValue">undefined</span>.</p>
+	<div class="left">
+		<h1>Telescience calculator</h1>
+		<table>
+			<tbody>
+				<tr>
+					<td><em>x<sub>pad</sub></em> =</td><td><input id="telepadX" placeholder="Pad X" type="number" min="0" max="255" /></td>
+					<td><em>y<sub>pad</sub></em> =</td><td><input id="telepadY" placeholder="Pad Y" type="number" min="0" max="255" /></td>
+				</tr>
+				<tr>
+					<td><em>x</em><sub>1</sub> = </td><td><input id="calibX1" placeholder="1st X" type="number" min="0" max="255" autocomplete="off" /></td>
+					<td><em>y</em><sub>1</sub> = </td><td><input id="calibY1" placeholder="1st Y" type="number" min="0" max="255" autocomplete="off" /></td>
+				</tr>
+				<tr>
+					<td><em>x</em><sub>2</sub> = </td><td><input id="calibX2" placeholder="2nd X" type="number" min="0" max="255" autocomplete="off" /></td>
+					<td><em>y</em><sub>2</sub> = </td><td><input id="calibY2" placeholder="2nd Y" type="number" min="0" max="255" autocomplete="off" /></td>
+				</tr>
+				<tr>
+					<td>φ =</td><td><input id="calibBearing" placeholder="bearing" type="number" autocomplete="off" /></td>
+					<td>θ =</td><td><input id="calibElevation" placeholder="elevation" type="number" autocomplete="off" /></td>
+				</tr>
+				<tr>
+					<td>P<sub>1</sub> =</td><td><select id="calibPower1">
+						<option>5</option>
+						<option>10</option>
+						<option>20</option>
+						<option>25</option>
+						<option>30</option>
+						<option>40</option>
+						<option>50</option>
+						<option>80</option>
+						<option>100</option>
+					</select></td>
+					<td>P<sub>2</sub> =</td><td><select id="calibPower2">
+						<option>5</option>
+						<option>10</option>
+						<option>20</option>
+						<option>25</option>
+						<option>30</option>
+						<option>40</option>
+						<option>50</option>
+						<option>80</option>
+						<option>100</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td colspan="4"><button type="button" class="fullWidth" id="btn_calculateErrors">Calculate Errors &darr;</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Δφ = <span class="value" id="bearingErrorValue">undefined</span>; Δθ = <span class="value" id="elevationErrorValue">undefined</span>; ΔP = <span class="value" id="powerErrorValue">undefined</span>.</p>
+		<table>
+			<tbody>
+				<tr>
+					<td><em>x<sub>targ</sub></em> =</td><td><input id="targetXValue" placeholder="desired X" type="number" min="1" max="255" /></td>
+					<td><em>y<sub>targ</sub></em> =</td><td><input id="targetYValue" placeholder="desired Y" type="number" min="1" max="255" /></td>
+				</tr>
+				<tr>
+					<td colspan="4"><button type="button" class="fullWidth" id="btn_triangulate">Triangulate coordinates</button></td>
+				</tr>	
+			</tbody>
+		</table>
+		<p>φ<sub>targ</sub> = <span class="value" id="bearingValue">undefined</span>; θ<sub>targ</sub> = <span class="value" id="elevationValue">undefined</span>; P<sub>targ</sub> = <span class="value" id="powerValue">undefined</span>.</p>
+	</div>
+	<div class="left">
+		<h1>Quick access</h1>
+		<ul id="qalist">
+			<li><a href="javascript:addQuickAccess(false)">add quick access...</a></li>
+		</ul>
+	</div>
 	<script>
 function _gid(id) {
 	return document.getElementById(id);
 }
+
+function addQuickAccess(cc) {
+	localStorage['quickAccess'] = (localStorage['quickAccess'] || "[]");
+	let temp = JSON.parse(localStorage['quickAccess']);
+	temp.push([prompt('Enter label'), parseInt(prompt('Enter X coordinate')), parseInt(prompt('Enter Y coordinate'))]);
+	localStorage['quickAccess'] = JSON.stringify(temp);
+	renderQuickAccess(cc);
+}
+
+function removeQuickAccess(index, cc) {
+	let temp = JSON.parse(localStorage['quickAccess']);
+	temp.splice(index, 1);
+	localStorage['quickAccess'] = JSON.stringify(temp);	
+	renderQuickAccess(cc);
+}
+
+function renderQuickAccess(calculateCoordinates) {
+	const quickLink = `<li><a href="javascript:addQuickAccess(${calculateCoordinates})">add quick access...</a></li>`;
+
+	qalist.innerHTML = '';
+	let qalinks = JSON.parse(localStorage['quickAccess']);
+	for(l in qalinks) {
+		let coords = '';
+		if(calculateCoordinates)
+			coords = triangulate({
+				x: qalinks[l][1],
+				y: qalinks[l][2]
+			}, {
+				x: parseInt(telepadX.value),
+				y: parseInt(telepadY.value)
+			}, errors);
+		qalist.innerHTML += `<li>${qalinks[l][0]} (${qalinks[l][1]}, ${qalinks[l][2]})${calculateCoordinates ? [' (' + coords.bearing.toFixed(2), coords.elevation.toFixed(2), coords.power].join(', ') + ')' : ''} <a href="javascript:removeQuickAccess(${l}, ${calculateCoordinates})">&times;</a> </li> `;
+	}
+	qalist.innerHTML += quickLink;
+}
+
+localStorage['quickAccess'] = localStorage['quickAccess'] || "";
+
+var qalist = _gid('qalist');
+renderQuickAccess(false);
 
 var bearingValue = _gid('bearingValue');
 var elevationValue = _gid('elevationValue');
@@ -122,6 +174,8 @@ _gid('btn_calculateErrors').addEventListener('click', () => {
 	bearingErrorValue.innerText = errors.bearing;
 	elevationErrorValue.innerText = errors.elevation;
 	powerErrorValue.innerText = errors.power;
+
+	renderQuickAccess(true);
 });
 
 _gid('btn_triangulate').addEventListener('click', () => {

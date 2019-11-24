@@ -55,12 +55,12 @@ function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation, po
 
 	let bearing1 = Math.atan2(delta1.x, delta1.y) * 180 / Math.PI;
 	let bearing2 = Math.atan2(delta2.x, delta2.y) * 180 / Math.PI;
-	boff = -Math.round((2 * bearing1 - bearing2) / 2); //average
+	boff = -Math.round((2 * bearing - bearing1 - bearing2) / 2); //average
 
 	poff = Math.round((Math.sqrt(D2) * power1 - Math.sqrt(D1) * power2) / (Math.sqrt(D1) - Math.sqrt(D2)));	
 
-	let elevation1 = 0.5 * Math.asin(10 * D1 / (power1 + poff)**2) * 180 / Math.PI;
-	let elevation2 = 0.5 * Math.asin(10 * D2 / (power2 + poff)**2) * 180 / Math.PI;
+	let elevation1 = Math.asin(10 * D1 / (power1 + poff)**2) * 90 / Math.PI;
+	let elevation2 = Math.asin(10 * D2 / (power2 + poff)**2) * 90 / Math.PI;
 	eoff = -Math.round((2 * elevation - elevation1 - elevation2) / 2); //average
 	
 	return {
