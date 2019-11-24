@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Telescience calculator</title>
+	<style>
+td:nth-child(odd) {
+	text-align: right;
+}
+
+span.value {
+	font-family: monospace;
+}
+
+button.fullWidth {
+	display: block;
+	width: 100%;
+}
+	</style>
+</head>
+<body>
+	<h1>Telescience calculator</h1>
+	<table>
+		<tbody>
+			<tr>
+				<td><em>x<sub>pad</sub></em> =</td><td><input id="telepadX" placeholder="Pad X" type="number" min="0" max="255" /></td>
+				<td><em>y<sub>pad</sub></em> =</td><td><input id="telepadY" placeholder="Pad Y" type="number" min="0" max="255" /></td>
+			</tr>
+			<tr>
+				<td><em>x</em><sub>1</sub> = </td><td><input id="calibX1" placeholder="1st X" type="number" min="0" max="255" autocomplete="off" /></td>
+				<td><em>y</em><sub>1</sub> = </td><td><input id="calibY1" placeholder="1st Y" type="number" min="0" max="255" autocomplete="off" /></td>
+			</tr>
+			<tr>
+				<td><em>x</em><sub>2</sub> = </td><td><input id="calibX2" placeholder="2nd X" type="number" min="0" max="255" autocomplete="off" /></td>
+				<td><em>y</em><sub>2</sub> = </td><td><input id="calibY2" placeholder="2nd Y" type="number" min="0" max="255" autocomplete="off" /></td>
+			</tr>
+			<tr>
+				<td>φ =</td><td><input id="calibBearing" placeholder="bearing" type="number" autocomplete="off" /></td>
+				<td>θ =</td><td><input id="calibElevation" placeholder="elevation" type="number" autocomplete="off" /></td>
+			</tr>
+			<tr>
+				<td>P<sub>1</sub> =</td><td><select id="calibPower1">
+					<option>5</option>
+					<option>10</option>
+					<option>20</option>
+					<option>25</option>
+					<option>30</option>
+					<option>40</option>
+					<option>50</option>
+					<option>80</option>
+					<option>100</option>
+				</select></td>
+				<td>P<sub>2</sub> =</td><td><select id="calibPower2">
+					<option>5</option>
+					<option>10</option>
+					<option>20</option>
+					<option>25</option>
+					<option>30</option>
+					<option>40</option>
+					<option>50</option>
+					<option>80</option>
+					<option>100</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td colspan="4"><button type="button" class="fullWidth" id="btn_calculateErrors">Calculate Errors &darr;</button></td>
+			</tr>
+		</tbody>
+	</table>
+	<p>Δφ = <span class="value" id="bearingErrorValue">undefined</span>; Δθ = <span class="value" id="elevationErrorValue">undefined</span>; ΔP = <span class="value" id="powerErrorValue">undefined</span>.</p>
+	<table>
+		<tbody>
+			<tr>
+				<td><em>x<sub>targ</sub></em> =</td><td><input id="targetXValue" placeholder="desired X" type="number" min="1" max="255" /></td>
+				<td><em>y<sub>targ</sub></em> =</td><td><input id="targetYValue" placeholder="desired Y" type="number" min="1" max="255" /></td>
+			</tr>
+			<tr>
+				<td colspan="4"><button type="button" class="fullWidth" id="btn_triangulate">Triangulate coordinates</button></td>
+			</tr>	
+		</tbody>
+	</table>
+	<p>φ<sub>targ</sub> = <span class="value" id="bearingValue">undefined</span>; θ<sub>targ</sub> = <span class="value" id="elevationValue">undefined</span>; P<sub>targ</sub> = <span class="value" id="powerValue">undefined</span>.</p>
+	<script>
+function _gid(id) {
+	return document.getElementById(id);
+}
+
+var bearingValue = _gid('bearingValue');
+var elevationValue = _gid('elevationValue');
+var powerValue = _gid('powerValue');
+var bearingErrorValue = _gid('bearingErrorValue');
+var elevationErrorValue = _gid('elevationErrorValue');
+var powerErrorValue = _gid('powerErrorValue');
+
+var telepadX = _gid('telepadX'); 
+var telepadY = _gid('telepadY'); 
+var calibX1 = _gid('calibX1');
+var calibY1 = _gid('calibY1');
+var calibX2 = _gid('calibX2');
+var calibY2 = _gid('calibY2');
+var calibBearing = _gid('calibBearing');
+var calibElevation = _gid('calibElevation');
+var calibPower1 = _gid('calibPower1');
+var calibPower2 = _gid('calibPower2');
+
+var targetXValue = _gid('targetXValue');
+var targetYValue = _gid('targetYValue');
+
+var errors = {};
+
+_gid('btn_calculateErrors').addEventListener('click', () => {
+	errors = calculateErrors({
+		x: parseInt(telepadX.value),
+		y: parseInt(telepadY.value)
+	}, {
+		x: parseInt(calibX1.value),
+		y: parseInt(calibY1.value)
+	}, {
+		x: parseInt(calibX2.value),
+		y: parseInt(calibY2.value)
+	}, parseInt(calibBearing.value), parseInt(calibElevation.value), parseInt(calibPower1.value), parseInt(calibPower2.value));
+	bearingErrorValue.innerText = errors.bearing;
+	elevationErrorValue.innerText = errors.elevation;
+	powerErrorValue.innerText = errors.power;
+});
+
+_gid('btn_triangulate').addEventListener('click', () => {
+	let coords = triangulate({
+		x: parseInt(targetXValue.value),
+		y: parseInt(targetYValue.value)
+	}, {
+		x: parseInt(telepadX.value),
+		y: parseInt(telepadY.value)
+	}, errors);
+	bearingValue.innerText = coords.bearing.toFixed(2);
+	elevationValue.innerText = coords.elevation.toFixed(2);
+	powerValue.innerText = coords.power.toFixed(2);
+});
+	</script>
+	<script src="./telesci.js"></script>
+</body>
+</html>
