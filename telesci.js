@@ -22,6 +22,8 @@ function triangulate(target, telepad, error) {
 
 	let distance = Math.hypot(target.x, target.y);
 	
+
+	//calculate minimum power for minimal electricity losses
 	for(P of POWERS) {
 		let elevation = 90 / Math.PI * Math.asin(10 * distance / (P + error.power)**2);
 		let trueElevation = elevation + error.elevation;
@@ -35,7 +37,11 @@ function triangulate(target, telepad, error) {
 		}
 	}
 
-	return config;
+	return {
+		bearing: NaN,
+		elevation: NaN,
+		power: NaN
+	};
 }
 
 function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation, power1, power2) {
@@ -61,7 +67,12 @@ function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation, po
 
 	let elevation1 = Math.asin(10 * D1 / (power1 + poff)**2) * 90 / Math.PI;
 	let elevation2 = Math.asin(10 * D2 / (power2 + poff)**2) * 90 / Math.PI;
-	eoff = -Math.round((2 * elevation - elevation1 - elevation2) / 2); //average
+	if(Number.isNaN(elevation1))
+		eoff = -Math.round(elevation - elevation2);
+	else if(Number.isNaN(elevation2))
+		eoff = -Math.round(elevation - elevation1);
+	else
+		eoff = -Math.round(2 * elevation - elevation1 - elevation2);
 	
 	return {
 		bearing: boff,
