@@ -86,8 +86,6 @@ div.left {
 			</tbody>
 		</table>
 		<p>φ<sub>targ</sub> = <span class="value" id="bearingValue">undefined</span>; θ<sub>targ</sub> = <span class="value" id="elevationValue">undefined</span>; P<sub>targ</sub> = <span class="value" id="powerValue">undefined</span>.</p>
-		<!--<p>Write this on paper to pretend to be a scientist</p>
-		<textarea rows="10" cols="60" id="roleplayLog"></textarea>-->
 	</div>
 	<div class="left">
 		<h1>Instructions</h1>
@@ -166,8 +164,6 @@ var calibPower2 = _gid('calibPower2');
 var targetXValue = _gid('targetXValue');
 var targetYValue = _gid('targetYValue');
 
-//var roleplayLog = _gid('roleplayLog');
-
 var errors = {};
 
 _gid('btn_calculateErrors').addEventListener('click', () => {
@@ -180,23 +176,11 @@ _gid('btn_calculateErrors').addEventListener('click', () => {
 	}, {
 		x: parseInt(calibX2.value),
 		y: parseInt(calibY2.value)
-	}, parseInt(calibBearing.value), parseInt(calibElevation.value), parseInt(calibPower1.value), parseInt(calibPower2.value));
+	}, parseInt(calibBearing.value), parseInt(calibElevation.value), null, parseInt(calibPower1.value), parseInt(calibPower2.value), true);
 	bearingErrorValue.innerText = errors.bearing;
 	elevationErrorValue.innerText = errors.elevation;
 	powerErrorValue.innerText = errors.power;
 	
-	/*roleplayLog.value = `Xp = ${telepadX.value}; Yp = ${telepadY.value}[br]\n` + 
-	                        `X1 = ${calibX1.value}; Y1 = ${calibY1.value};[br]\n` + 
-	                        `X2 = ${calibX2.value} Y2 = ${calibY2.value};[br]\n` +
-	                        `φ = ${calibBearing.value}; θ = ${calibElevation.value}; P1 = ${calibPower1.value}; P2 ${calibPower2.value}` +
-	                        `φ1 = arctg((X1 - Xp) / (Y2 - Yp));[br]\n` + 
-	                        `φ2 = arctg((X2 - Xp) / (Y2 - Yp));[br]\n` + 
-	                        `Δφ = 2 * φ - φ1 - φ2; Δφ = ${errors.bearing};[br]\n` +
-	                        `D1 = √((X1 - Xp)² + (Y1 - Yp)²); D2 = √((X2 - Xp)² + (Y2 - Yp)²);[br]\n` +
-	                        `ΔP = (√D2 * P1 - √D1 * P2) / (√D1 - √D2); ΔP = ${errors.power};[br]\n` +
-	                        `θ1 = arcsin(10 * D1 / (P1 + ΔP)²);[br]\n` +
-	                        `θ2 = arcsin(10 * D2 / (P2 + ΔP)²);[br]\n` +
-	                        `Δθ = 2 * θ - θ1 - θ2; Δθ = ${errors.elevation};[br]\n;`*/
 	renderQuickAccess(true);
 });
 

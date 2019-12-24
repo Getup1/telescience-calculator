@@ -55,8 +55,10 @@ function triangulate(target, telepad, error, recurse) {
 	};
 }
 
-function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation, power1, power2) {
+function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation1, elevation2, power1, power2, powerBased) {
 	let boff, eoff, poff;
+	
+	powerBased = powerBased || true;
 
 	let delta1 = {
 		x: coords1.x - telepadCoords.x,
@@ -73,22 +75,30 @@ function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation, po
 	let bearing1 = Math.atan2(delta1.x, delta1.y) * 180 / Math.PI;
 	let bearing2 = Math.atan2(delta2.x, delta2.y) * 180 / Math.PI;
 	boff = -Math.round((2 * bearing - bearing1 - bearing2) / 2); //average
+	if(powerBased) {
+		poff = clamp(Math.round((Math.sqrt(D2) * power1 - Math.sqrt(D1) * power2) / (Math.sqrt(D1) - Math.sqrt(D2))), -4, 0);
 
-	poff = clamp(Math.round((Math.sqrt(D2) * power1 - Math.sqrt(D1) * power2) / (Math.sqrt(D1) - Math.sqrt(D2))), -4, 0);
+		let elev1 = Math.asin(10 * D1 / (power1 + poff)**2) * 90 / Math.PI;
+		let elev2 = Math.asin(10 * D2 / (power2 + poff)**2) * 90 / Math.PI;
 
-	let elevation1 = Math.asin(10 * D1 / (power1 + poff)**2) * 90 / Math.PI;
-	let elevation2 = Math.asin(10 * D2 / (power2 + poff)**2) * 90 / Math.PI;
+		/*if(Math.abs(10 * D1 / (power1 + poff)**2) >= 0.9 || Math.abs(10 * D2 / (power2 + poff)**2) >= 0.9) {
+			console.log("Large inaccuracy expected. Recalibration is adviced.");
+		}*/
 
-	if(Math.abs(10 * D1 / (power1 + poff)**2) >= 0.9 || Math.abs(10 * D2 / (power2 + poff)**2) >= 0.9) {
-		console.log("Large inaccuracy expected. Recalibration is adviced.");
-	}
+		if(Number.isNaN(elevation1)) {
+			eoff = -Math.round(elevation1 - elev2);
+		} else if(Number.isNaN(elevation2)) {
+			eoff = -Math.round(elevation1 - elev1);
+		} else {
+			eoff = -Math.round((2 * elevation1 - elev1 - elev2) / 2);
+		}
+	} else { //TODO: implement GUI
+		eoff = Math.atan((D2 * Math.sin(2*elevation1) - D1*Math.sin(2*elevation2)) / ((D1 * Math.cos(2*elevation2) - D2*Math.cos(2*elevation1))));
+		
+		p1 = Math.sqrt(10 * D1 / Math.sin(2 * elevation1));
+		p2 = Math.sqrt(10 * D2 / Math.sin(2 * elevation2));
 
-	if(Number.isNaN(elevation1)) {
-		eoff = -Math.round(elevation - elevation2);
-	} else if(Number.isNaN(elevation2)) {
-		eoff = -Math.round(elevation - elevation1);
-	} else {
-		eoff = -Math.round((2 * elevation - elevation1 - elevation2) / 2);
+		poff = Math.round((2 * power1 - p1 - p2) / 2);
 	}
 
 	return {
