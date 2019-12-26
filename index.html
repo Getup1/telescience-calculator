@@ -21,11 +21,19 @@ div.left {
 	padding: 1em;
 	float: left;
 }
+
+.e2toggle {
+	display: none;
+}
 	</style>
 </head>
 <body>
 	<div class="left">
 		<h1>Telescience calculator</h1>
+		<p>Calculate (
+		<input type="radio" autocomplete="off" checked name="calibMode" id="modePower" value="power"> <label for="modePower">power</label>
+		<input type="radio" autocomplete="off" name="calibMode" id="modeElevation" value="elevation"> <label for="modeElevation">elevation</label>
+		) first.</p>
 		<table>
 			<tbody>
 				<tr>
@@ -41,11 +49,11 @@ div.left {
 					<td><em>y</em><sub>2</sub> = </td><td><input id="calibY2" placeholder="2nd Y" type="number" min="0" max="255" autocomplete="off" /></td>
 				</tr>
 				<tr>
-					<td>φ =</td><td><input id="calibBearing" placeholder="bearing" type="number" autocomplete="off" /></td>
-					<td>θ =</td><td><input id="calibElevation" placeholder="elevation" type="number" autocomplete="off" /></td>
+					<td><em>φ</em> =</td><td><input id="calibBearing" placeholder="bearing" type="number" autocomplete="off" /></td>
+					<td><em>θ<sub>1</sub></em> =</td><td><input id="calibElevation1" placeholder="elevation 1" type="number" autocomplete="off" /></td>
 				</tr>
 				<tr>
-					<td>P<sub>1</sub> =</td><td><select id="calibPower1">
+					<td><em>P<sub>1</sub></em> =</td><td><select id="calibPower1">
 						<option>5</option>
 						<option>10</option>
 						<option>20</option>
@@ -56,7 +64,7 @@ div.left {
 						<option>80</option>
 						<option>100</option>
 					</select></td>
-					<td>P<sub>2</sub> =</td><td><select id="calibPower2">
+					<td class="p2toggle"><em>P<sub>2</sub></em> =</td><td class="p2toggle"><select id="calibPower2">
 						<option>5</option>
 						<option>10</option>
 						<option>20</option>
@@ -67,6 +75,7 @@ div.left {
 						<option>80</option>
 						<option>100</option>
 					</select></td>
+					<td class="e2toggle"><em>θ<sub>2</sub></em> =</td><td class="e2toggle"><input id="calibElevation2" placeholder="elevation 2" type="number" autocomplete="off" /></td>
 				</tr>
 				<tr>
 					<td colspan="4"><button type="button" class="fullWidth" id="btn_calculateErrors">Calculate Errors &darr;</button></td>
@@ -89,9 +98,14 @@ div.left {
 	</div>
 	<div class="left">
 		<h1>Instructions</h1>
+		<h2>Power mode</h2>
 		<p class="lore">Recommended settings for calibration: φ = 45° &times; n; θ = 22°.</p>
-		<p>We need two tests to calculate power error correctly.</p>
-		<p>Sometimes elevation can be NaN, or be very inaccurate.</p>
+		<p class="lore">We need two tests to calculate power error correctly.</p>
+		<p class="lore">Sometimes elevation can be NaN, or be very inaccurate.</p>
+		<h2>Elevation mode</h2>
+		<p class="lore">Recommended settings for calibration: φ = 0°; θ<sub>1</sub> = 45°; θ<sub>2</sub> = 50°.</p>
+		<p class="lore">This is one is supposed to be more consistent than previous one.</p>
+		<p class="lore">Although small error occurence is much higher.</p>
 	</div>
 	<div class="left">
 		<h1>Quick access</h1>
@@ -150,6 +164,9 @@ var bearingErrorValue = _gid('bearingErrorValue');
 var elevationErrorValue = _gid('elevationErrorValue');
 var powerErrorValue = _gid('powerErrorValue');
 
+var modePower = _gid('modePower');
+var modeElevation = _gid('modeElevation');
+
 var telepadX = _gid('telepadX'); 
 var telepadY = _gid('telepadY'); 
 var calibX1 = _gid('calibX1');
@@ -157,7 +174,8 @@ var calibY1 = _gid('calibY1');
 var calibX2 = _gid('calibX2');
 var calibY2 = _gid('calibY2');
 var calibBearing = _gid('calibBearing');
-var calibElevation = _gid('calibElevation');
+var calibElevation1 = _gid('calibElevation1');
+var calibElevation2 = _gid('calibElevation2');
 var calibPower1 = _gid('calibPower1');
 var calibPower2 = _gid('calibPower2');
 
@@ -165,6 +183,29 @@ var targetXValue = _gid('targetXValue');
 var targetYValue = _gid('targetYValue');
 
 var errors = {};
+modePower.addEventListener('change', () => {
+	if(modePower.checked) {
+		[...document.getElementsByClassName('p2toggle')].forEach((item) => {
+			item.style.display = "table-cell";	
+		});
+		[...document.getElementsByClassName('e2toggle')].forEach((item) => {
+			item.style.display = "none";	
+		});
+	}
+});
+modeElevation.addEventListener('change', () => {
+	if(modeElevation.checked) {
+		[...document.getElementsByClassName('e2toggle')].forEach((item) => {
+			item.style.display = "table-cell";	
+		});
+		[...document.getElementsByClassName('p2toggle')].forEach((item) => {
+			item.style.display = "none";	
+		});
+	}
+
+});
+
+modePower.select();
 
 _gid('btn_calculateErrors').addEventListener('click', () => {
 	errors = calculateErrors({
@@ -176,7 +217,7 @@ _gid('btn_calculateErrors').addEventListener('click', () => {
 	}, {
 		x: parseInt(calibX2.value),
 		y: parseInt(calibY2.value)
-	}, parseInt(calibBearing.value), parseInt(calibElevation.value), null, parseInt(calibPower1.value), parseInt(calibPower2.value), true);
+	}, parseInt(calibBearing.value), parseInt(calibElevation1.value), parseInt(calibElevation2.value), parseInt(calibPower1.value), parseInt(calibPower2.value), modePower.checked);
 	bearingErrorValue.innerText = errors.bearing;
 	elevationErrorValue.innerText = errors.elevation;
 	powerErrorValue.innerText = errors.power;

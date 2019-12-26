@@ -58,8 +58,6 @@ function triangulate(target, telepad, error, recurse) {
 function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation1, elevation2, power1, power2, powerBased) {
 	let boff, eoff, poff;
 	
-	powerBased = powerBased || true;
-
 	let delta1 = {
 		x: coords1.x - telepadCoords.x,
 		y: coords1.y - telepadCoords.y,
@@ -81,10 +79,6 @@ function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation1, e
 		let elev1 = Math.asin(10 * D1 / (power1 + poff)**2) * 90 / Math.PI;
 		let elev2 = Math.asin(10 * D2 / (power2 + poff)**2) * 90 / Math.PI;
 
-		/*if(Math.abs(10 * D1 / (power1 + poff)**2) >= 0.9 || Math.abs(10 * D2 / (power2 + poff)**2) >= 0.9) {
-			console.log("Large inaccuracy expected. Recalibration is adviced.");
-		}*/
-
 		if(Number.isNaN(elevation1)) {
 			eoff = -Math.round(elevation1 - elev2);
 		} else if(Number.isNaN(elevation2)) {
@@ -92,13 +86,17 @@ function calculateErrors(telepadCoords, coords1, coords2, bearing, elevation1, e
 		} else {
 			eoff = -Math.round((2 * elevation1 - elev1 - elev2) / 2);
 		}
-	} else { //TODO: implement GUI
-		eoff = Math.atan((D2 * Math.sin(2*elevation1) - D1*Math.sin(2*elevation2)) / ((D1 * Math.cos(2*elevation2) - D2*Math.cos(2*elevation1))));
+	} else { 
+		eoff = Math.round(
+			90 / Math.PI * Math.atan(
+				(D2 * Math.sin(Math.PI / 90 * elevation1) - D1*Math.sin(Math.PI / 90 * elevation2)) / ///* fix vim highlighting here
+				(D1 * Math.cos(Math.PI / 90 * elevation2) - D2*Math.cos(Math.PI / 90 * elevation1))
+			)
+		);
 		
-		p1 = Math.sqrt(10 * D1 / Math.sin(2 * elevation1));
-		p2 = Math.sqrt(10 * D2 / Math.sin(2 * elevation2));
-
-		poff = Math.round((2 * power1 - p1 - p2) / 2);
+		let p1 = Math.sqrt(10 * D1 / Math.sin(Math.PI / 90 * (elevation1 + eoff)));
+		let p2 = Math.sqrt(10 * D2 / Math.sin(Math.PI / 90 * (elevation2 + eoff)));
+		poff = -Math.round((2 * power1 - p1 - p2) / 2);
 	}
 
 	return {
